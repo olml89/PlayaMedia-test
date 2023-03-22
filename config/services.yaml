@@ -22,3 +22,4 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    olml89\PlayaMedia\User\Domain\UserRepository: '@olml89\PlayaMedia\User\Infrastructure\Persistence\DummyUserRepository'

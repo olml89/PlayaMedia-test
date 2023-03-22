@@ -1,3 +1,9 @@
-controllers:
-    resource: ../src/Common/Infrastructure/Symfony/Controller/
-    type: attribute
+# config/routes.yaml
+#
+# on why routes.xml doesn't work anymore:
+# https://stackoverflow.com/questions/62160689/why-doesnt-symfony-5-1-recognize-routes-configured-on-a-routes-php-file
+#
+api_search_users:
+    path: /api/users
+    methods: GET
+    controller: olml89\PlayaMedia\User\Infrastructure\Endpoints\SearchApiController

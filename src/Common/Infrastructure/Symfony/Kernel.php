@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App;
+namespace olml89\PlayaMedia\Common\Infrastructure\Symfony;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;

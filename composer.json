@@ -1,6 +1,9 @@
 {
+    "name": "olml89/playamedia",
     "type": "project",
-    "license": "proprietary",
+    "description": "Implementation of a technical test for a senior backend developer role at PlayaMedia",
+    "keywords": ["playamedia", "symfony", "test"],
+    "license": "MIT",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
@@ -30,12 +33,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "olml89\\PlayaMedia\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "replace": {

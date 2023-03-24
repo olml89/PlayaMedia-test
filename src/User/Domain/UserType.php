@@ -6,4 +6,5 @@ enum UserType: int
 {
     case Type1 = 1;
     case Type2 = 2;
+    case Type3 = 3;
 }

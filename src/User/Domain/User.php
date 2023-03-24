@@ -85,9 +85,9 @@ class User
         return $this;
     }
 
-    public function isActive(): bool
+    public function isActive(): ?bool
     {
-        return $this->isActive ?? false;
+        return $this->isActive;
     }
 
     public function activate(): self

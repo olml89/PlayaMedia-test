@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace olml89\PlayaMedia\User\Infrastructure\Endpoints;
 
 use DateTimeImmutable;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use olml89\PlayaMedia\Common\Domain\Criteria\Order\OrderType;
 use olml89\PlayaMedia\Common\Domain\ValueObjects\DateTimeRangeValueObject;
 use olml89\PlayaMedia\Common\Domain\ValueObjects\NullableBoolValueObject;
@@ -22,7 +23,7 @@ final class SearchRequest extends Request
 {
     use TypeCastsQueryString;
 
-    private function configureOptions(OptionsResolver $resolver): void
+    private function configureOptions(OptionsResolver $resolver, ClassMetadata $userMetadata): void
     {
         $resolver
             ->setDefined('filters')
@@ -90,10 +91,11 @@ final class SearchRequest extends Request
         $resolver
             ->setDefined('order')
             ->setAllowedTypes('order', 'array')
-            ->setDefault('order', function (OptionsResolver $optionsResolver): void {
+            ->setDefault('order', function (OptionsResolver $optionsResolver) use($userMetadata): void {
                 $optionsResolver
                     ->setDefined('by')
-                    ->setAllowedTypes('by', 'string');
+                    ->setAllowedTypes('by', 'string')
+                    ->setAllowedValues('by', array_keys($userMetadata->fieldNames));
                 $optionsResolver
                     ->setDefined('type')
                     ->setAllowedTypes('type', 'string')
@@ -133,10 +135,10 @@ final class SearchRequest extends Request
         return new ParameterBag($resolvedParameters);
     }
 
-    public function validate(): SearchData
+    public function validate(ClassMetadata $userMetadata): SearchData
     {
         $resolver = new OptionsResolver();
-        $this->configureOptions($resolver);
+        $this->configureOptions($resolver, $userMetadata);
 
         try {
             $validatedQueryString = $this->validateQueryString($resolver);

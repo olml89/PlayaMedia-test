@@ -5,7 +5,6 @@ namespace olml89\PlayaMedia\User\Infrastructure\Endpoints;
 use olml89\PlayaMedia\User\Application\Search\SearchUseCase;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 final class SearchApiController extends AbstractController
 {
@@ -13,10 +12,11 @@ final class SearchApiController extends AbstractController
         private readonly SearchUseCase $searchUseCase,
     ) {}
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(SearchRequest $request): JsonResponse
     {
-        $usersResults = $this->searchUseCase->search();
+        $searchData = $request->validate();
+        $searchResult = $this->searchUseCase->search($searchData);
 
-        return $this->json($usersResults);
+        return $this->json($searchResult);
     }
 }

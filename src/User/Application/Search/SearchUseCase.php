@@ -2,24 +2,21 @@
 
 namespace olml89\PlayaMedia\User\Application\Search;
 
-use olml89\PlayaMedia\User\Application\UserResult;
-use olml89\PlayaMedia\User\Domain\User;
+use olml89\PlayaMedia\Common\Domain\Criteria\CriteriaBuilder;
+use olml89\PlayaMedia\User\Application\SearchResult;
 use olml89\PlayaMedia\User\Domain\UserRepository;
 
 final class SearchUseCase
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly CriteriaBuilder $criteriaBuilder,
     ) {}
 
-    /**
-     * @return UserResult[]
-     */
-    public function search(): array
+    public function search(SearchData $searchData): SearchResult
     {
-        return array_map(
-            fn(User $user): UserResult => new UserResult($user),
-            $this->userRepository->all()
-        );
+        $criteria = $searchData->criteria($this->criteriaBuilder);
+
+        return new SearchResult(...$this->userRepository->search($criteria));
     }
 }

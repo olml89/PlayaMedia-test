@@ -21,15 +21,6 @@ final class UserTypeType extends Type
         return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): int
-    {
-        if (!($value instanceof UserType)) {
-            throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['int']);
-        }
-
-        return $value->value;
-    }
-
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): UserType
     {
         if (!is_int($value)) {

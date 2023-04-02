@@ -35,7 +35,10 @@ final class DoctrineUserRepository extends EntityRepository implements UserRepos
      */
     public function search(Criteria $criteria): array
     {
-        $doctrineCriteria = DoctrineCriteriaConverter::convert($criteria);
+        $doctrineCriteria = DoctrineCriteriaConverter::convert(
+            criteria: $criteria,
+            criteriaToDoctrineFields: $this->getEntityManager()->getClassMetadata(User::class)->fieldNames,
+        );
 
         return $this->getEntityManager()->getRepository(User::class)->matching($doctrineCriteria)->toArray();
     }

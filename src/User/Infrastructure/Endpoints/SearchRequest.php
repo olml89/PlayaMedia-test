@@ -3,9 +3,12 @@
 namespace olml89\PlayaMedia\User\Infrastructure\Endpoints;
 
 use DateTimeImmutable;
+use olml89\PlayaMedia\Common\Domain\Criteria\Order\OrderType;
 use olml89\PlayaMedia\Common\Domain\ValueObjects\DateTimeRangeValueObject;
 use olml89\PlayaMedia\Common\Domain\ValueObjects\NullableBoolValueObject;
 use olml89\PlayaMedia\Common\Infrastructure\Http\TypeCastsQueryString;
+use olml89\PlayaMedia\User\Application\Search\Filters;
+use olml89\PlayaMedia\User\Application\Search\Order;
 use olml89\PlayaMedia\User\Application\Search\SearchData;
 use olml89\PlayaMedia\User\Domain\UserType;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -83,6 +86,39 @@ final class SearchRequest extends Request
             ->setNormalizer('filters', function (Options $options, array $value): ParameterBag {
                 return new ParameterBag($value);
             });
+
+        $resolver
+            ->setDefined('order')
+            ->setAllowedTypes('order', 'array')
+            ->setDefault('order', function (OptionsResolver $optionsResolver): void {
+                $optionsResolver
+                    ->setDefined('by')
+                    ->setAllowedTypes('by', 'string');
+                $optionsResolver
+                    ->setDefined('type')
+                    ->setAllowedTypes('type', 'string')
+                    ->setAllowedValues('type', [
+                        OrderType::ASC->value,
+                        OrderType::DESC->value,
+                    ]);
+            })
+            ->setNormalizer('order', function (Options $options, array $value): ParameterBag {
+                return new ParameterBag($value);
+            });
+
+        $resolver
+            ->setDefined('offset')
+            ->setAllowedTypes('offset', 'int')
+            ->setAllowedValues('offset', function (int $value): bool {
+                return $value > 0;
+            });
+
+        $resolver
+            ->setDefined('limit')
+            ->setAllowedTypes('limit', 'int')
+            ->setAllowedValues('limit', function (int $value): bool {
+                return $value > 0;
+            });
     }
 
     /**
@@ -106,10 +142,18 @@ final class SearchRequest extends Request
             $validatedQueryString = $this->validateQueryString($resolver);
 
             return new SearchData(
-                is_active: $validatedQueryString->get('filters')->get('is_active'),
-                is_member: $validatedQueryString->get('filters')->get('is_member'),
-                user_type: $validatedQueryString->get('filters')->get('user_type'),
-                last_login_at: $validatedQueryString->get('filters')->get('last_login_at'),
+                filters: new Filters(
+                    is_active: $validatedQueryString->get('filters')->get('is_active'),
+                    is_member: $validatedQueryString->get('filters')->get('is_member'),
+                    user_type: $validatedQueryString->get('filters')->get('user_type'),
+                    last_login_at: $validatedQueryString->get('filters')->get('last_login_at'),
+                ),
+                order: new Order(
+                    order_by: $validatedQueryString->get('order')->get('by'),
+                    order_type: $validatedQueryString->get('order')->get('type'),
+                ),
+                offset: $validatedQueryString->get('offset'),
+                limit: $validatedQueryString->get('limit'),
             );
         }
         catch (InvalidArgumentException $e) {

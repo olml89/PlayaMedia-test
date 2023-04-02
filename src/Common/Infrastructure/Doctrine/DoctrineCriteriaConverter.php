@@ -14,16 +14,22 @@ use olml89\PlayaMedia\Common\Domain\Criteria\CompositeExpressions\OrExpression;
 use olml89\PlayaMedia\Common\Domain\Criteria\Criteria;
 use olml89\PlayaMedia\Common\Domain\Criteria\Expression;
 use olml89\PlayaMedia\Common\Domain\Criteria\Expressions\SearchFilter;
+use olml89\PlayaMedia\Common\Domain\Criteria\Order\Order;
+use olml89\PlayaMedia\Common\Domain\Criteria\Order\OrderBy;
 
 final class DoctrineCriteriaConverter
 {
     private function __construct(
         private readonly Criteria $criteria,
+        private readonly array $criteriaToDoctrineFields,
     ) {}
 
-    public static function convert(Criteria $criteria): DoctrineCriteria
+    public static function convert(
+        Criteria $criteria,
+        array $criteriaToDoctrineFields = []
+    ): DoctrineCriteria
     {
-        $converter = new self($criteria);
+        $converter = new self($criteria, $criteriaToDoctrineFields);
 
         return $converter->toDoctrineCriteria();
     }
@@ -32,9 +38,9 @@ final class DoctrineCriteriaConverter
     {
         return new DoctrineCriteria(
             expression: $this->buildDoctrineExpression($this->criteria->expression()),
-            orderings: null,
-            firstResult: null,
-            maxResults: null,
+            orderings: $this->buildDoctrineOrder($this->criteria->order()),
+            firstResult: $this->criteria->offset(),
+            maxResults: $this->criteria->limit(),
         );
     }
 
@@ -81,5 +87,25 @@ final class DoctrineCriteriaConverter
         }
 
         return null;
+    }
+
+    private function mapOrderBy(OrderBy $field): string
+    {
+        $fieldName = (string)$field;
+
+        return array_key_exists($fieldName, $this->criteriaToDoctrineFields)
+            ? $this->criteriaToDoctrineFields[$fieldName]
+            : $fieldName;
+    }
+
+    private function buildDoctrineOrder(?Order $order): ?array
+    {
+        if (is_null($order)) {
+            return null;
+        }
+
+        return [
+            $this->mapOrderBy($order->orderBy()) => $order->orderType()->value,
+        ];
     }
 }

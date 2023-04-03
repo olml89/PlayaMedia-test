@@ -16,6 +16,7 @@ use olml89\PlayaMedia\User\Application\Search\SearchData;
 use olml89\PlayaMedia\User\Application\Search\SearchUseCase;
 use olml89\PlayaMedia\User\Application\SearchResult;
 use olml89\PlayaMedia\User\Domain\User;
+use olml89\PlayaMedia\User\Domain\UserRepository;
 use olml89\PlayaMedia\User\Domain\UserType;
 use Tests\InitsDatabase;
 use Tests\TestCase;
@@ -23,6 +24,7 @@ use Tests\TestCase;
 final class SearchUserUseCaseTest extends TestCase
 {
     private readonly SearchUseCase $searchUseCase;
+    private readonly UserRepository $userRepository;
     private readonly EntityRepository $doctrineUserRepository;
     private readonly ClassMetadata $doctrineUserClassMetadata;
 
@@ -38,6 +40,7 @@ final class SearchUserUseCaseTest extends TestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
 
+        $this->userRepository = self::getContainer()->get(UserRepository::class);
         $this->doctrineUserRepository = $entityManager->getRepository(User::class);
         $this->doctrineUserClassMetadata = $entityManager->getClassMetadata(User::class);
     }
@@ -217,8 +220,7 @@ final class SearchUserUseCaseTest extends TestCase
 
     public function test_search_without_filters_is_the_same_as_listing_all_users(): void
     {
-        /** @var User[] $users */
-        $users = $this->doctrineUserRepository->findAll();
+        $users = $this->userRepository->all();
         $searchData = $this->createSearchData();
 
         $searchResult = $this->searchUseCase->search($searchData);

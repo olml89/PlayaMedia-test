@@ -13,10 +13,13 @@ use olml89\PlayaMedia\User\Domain\Specifications\OrSpecification;
 use olml89\PlayaMedia\User\Domain\Specifications\UserTypeSpecification;
 use olml89\PlayaMedia\User\Domain\User;
 use olml89\PlayaMedia\User\Domain\UserType;
-use Tests\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\GetsKernelClass;
 
-final class UserSpecificationsTest extends TestCase
+final class UserSpecificationsTest extends KernelTestCase
 {
+    use GetsKernelClass;
+
     private readonly User $user;
 
     protected function setUp(): void

@@ -3,9 +3,8 @@
 namespace Tests;
 
 use olml89\PlayaMedia\Common\Infrastructure\Symfony\Kernel;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-abstract class TestCase extends KernelTestCase
+trait GetsKernelClass
 {
     protected static function getKernelClass(): string
     {

@@ -6,11 +6,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use olml89\PlayaMedia\User\Domain\User;
 use olml89\PlayaMedia\User\Infrastructure\Endpoints\SearchRequest;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Tests\TestCase;
+use Tests\GetsKernelClass;
 
-final class SearchRequestTest extends TestCase
+final class SearchRequestTest extends KernelTestCase
 {
+    use GetsKernelClass;
+
     private readonly ClassMetadata $userClassMetadata;
 
     /**

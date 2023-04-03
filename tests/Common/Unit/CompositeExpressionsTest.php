@@ -8,10 +8,13 @@ use olml89\PlayaMedia\Common\Domain\Criteria\CompositeExpressions\OrExpression;
 use olml89\PlayaMedia\Common\Domain\Criteria\CriteriaBuilder;
 use olml89\PlayaMedia\User\Domain\Specifications\IsActiveSpecification;
 use olml89\PlayaMedia\User\Domain\Specifications\IsMemberSpecification;
-use Tests\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\GetsKernelClass;
 
-final class CompositeExpressionsTest extends TestCase
+final class CompositeExpressionsTest extends KernelTestCase
 {
+    use GetsKernelClass;
+
     private readonly CriteriaBuilder $criteriaBuilder;
 
     /**

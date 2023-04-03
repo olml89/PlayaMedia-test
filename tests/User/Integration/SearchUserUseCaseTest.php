@@ -18,11 +18,14 @@ use olml89\PlayaMedia\User\Application\SearchResult;
 use olml89\PlayaMedia\User\Domain\User;
 use olml89\PlayaMedia\User\Domain\UserRepository;
 use olml89\PlayaMedia\User\Domain\UserType;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\GetsKernelClass;
 use Tests\InitsDatabase;
-use Tests\TestCase;
 
-final class SearchUserUseCaseTest extends TestCase
+final class SearchUserUseCaseTest extends KernelTestCase
 {
+    use GetsKernelClass;
+
     private readonly SearchUseCase $searchUseCase;
     private readonly UserRepository $userRepository;
     private readonly EntityRepository $doctrineUserRepository;

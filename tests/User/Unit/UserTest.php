@@ -5,10 +5,13 @@ namespace Tests\User\Unit;
 use DateTimeImmutable;
 use olml89\PlayaMedia\User\Domain\User;
 use olml89\PlayaMedia\User\Domain\UserType;
-use Tests\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\GetsKernelClass;
 
-final class UserTest extends TestCase
+final class UserTest extends KernelTestCase
 {
+    use GetsKernelClass;
+
     private User $user;
 
     protected function setUp(): void

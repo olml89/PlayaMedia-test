@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Integration;
+namespace Tests\User\Integration;
 
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Criteria as DoctrineCriteria;
@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use olml89\PlayaMedia\Common\Domain\Criteria\Order\OrderType;
 use olml89\PlayaMedia\Common\Domain\ValueObjects\DateTimeRangeValueObject;
 use olml89\PlayaMedia\Common\Domain\ValueObjects\NullableBoolValueObject;
-use olml89\PlayaMedia\Common\Infrastructure\Symfony\Kernel;
 use olml89\PlayaMedia\User\Application\Search\Filters;
 use olml89\PlayaMedia\User\Application\Search\Order;
 use olml89\PlayaMedia\User\Application\Search\SearchData;
@@ -18,8 +17,8 @@ use olml89\PlayaMedia\User\Application\Search\SearchUseCase;
 use olml89\PlayaMedia\User\Application\SearchResult;
 use olml89\PlayaMedia\User\Domain\User;
 use olml89\PlayaMedia\User\Domain\UserType;
-use Tests\TestCase;
 use Tests\InitsDatabase;
+use Tests\TestCase;
 
 final class SearchUserUseCaseTest extends TestCase
 {

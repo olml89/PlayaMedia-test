@@ -54,9 +54,9 @@ class User
         return $this;
     }
 
-    public function password(): string
+    public function authenticate(string $password): bool
     {
-        return $this->password;
+        return $this->password === $password;
     }
 
     public function setPassword(string $password): self

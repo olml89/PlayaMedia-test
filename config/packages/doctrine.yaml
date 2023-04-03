@@ -3,7 +3,7 @@ doctrine:
         # IMPORTANT: You MUST configure your server version,
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '15'
-        url: '%env(resolve:DATABASE_URL)%'
+        url: 'mysql://%env(string:DB_USER)%:%env(string:DB_PASSWORD)%@%env(string:DB_HOST)%:%env(string:DB_PORT)%/%env(string:DB_NAME)%?serverVersion=8.0'
 
         types:
             user_type: olml89\PlayaMedia\User\Infrastructure\Persistence\UserTypeType

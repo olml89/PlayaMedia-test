@@ -1,0 +1,98 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: write
+
+jobs:
+  symfony-tests:
+    runs-on: ubuntu-latest
+    env:
+      APP_ENV: test
+      APP_SECRET: ${{ secrets.APP_SECRET }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_DATABASE: ${{ env.DB_NAME }}
+          MYSQL_USER: ${{ env.DB_USER }}
+          MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    #  - name: Set up MySQL
+    #    uses: mirromutth/mysql-action@v1.1
+    #    with:
+    #      host port: ${{ env.DB_PORT }}
+    #      container port: ${{ env.DB_PORT }}
+    #      mysql database: ${{ env.DB_NAME }}
+    #      mysql user: ${{ env.DB_USER }}
+    #      mysql password:  ${{ env.DB_PASSWORD }}
+
+      - name: Checkout Code
+        uses: actions/checkout@v3.4.0
+
+      - name: Import MySQL schema
+        run: sudo mysql -h ${{ env.DB_HOST }} -P ${{ env.DB_PORT }} -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_NAME }} < database/schema.sql
+
+      - name: Create .env file
+        run: touch .env
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Clear Symfony cache
+        run: php bin/console cache:pool:clear cache.global_clearer
+
+      - name: Run PHPUnit tests
+        env:
+          XDEBUG_MODE: coverage
+        run: php bin/phpunit --coverage-clover ./coverage.xml
+
+      #- name: PHPUnit Tests
+      #  uses: php-actions/phpunit@v3
+      #  env:
+      #    XDEBUG_MODE: coverage
+      #  with:
+      #    # Specifying the same version as the installed locally by symfony/test-pack
+      #    version: 9.6.6
+      #    php_version: 8.1
+      #    php_extensions: xdebug pdo_mysql
+      #    bootstrap: vendor/autoload.php
+      #    configuration: phpunit.xml.dist
+      #    args: tests --coverage-clover ./coverage.xml
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          verbose: true
